@@ -8,6 +8,8 @@ contract BalanceChecker2 is IStruct {
     IMulticall3 public multicall;
     address public tokenAddress;
 
+    event BalanceChecked(address indexed user, uint256 balance);
+
     constructor(address _multicallAddress, address _tokenAddress) {
         multicall = IMulticall3(_multicallAddress);
         tokenAddress = _tokenAddress;
@@ -35,6 +37,7 @@ contract BalanceChecker2 is IStruct {
         for (uint256 i = 0; i < results.length; i++) {
             require(results[i].success, "BalanceChecker2: Call failed");
             balances[i] = abi.decode(results[i].returnData, (uint256));
+            emit BalanceChecked(addresses[i], balances[i]);
         }
 
         return balances;
